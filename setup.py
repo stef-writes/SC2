@@ -11,7 +11,7 @@ setup(
     description="A lightweight, efficient chain execution framework for LLM-powered workflows",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/scriptchain",
+    url="https://github.com/stef-writes/SC2",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -31,6 +31,7 @@ setup(
         "python-dotenv>=0.19.0",
         "openai>=1.0.0",
         "networkx>=3.0",
+        "click>=8.0.0",
     ],
     extras_require={
         "dev": [
