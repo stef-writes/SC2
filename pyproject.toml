@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A lightweight, efficient chain execution framework for LLM-powered workflows"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE" }
+license = "MIT"
 authors = [
     { name = "ScriptChain Contributors", email = "contributors@scriptchain.dev" }
 ]
@@ -19,6 +19,7 @@ dependencies = [
     "python-dotenv>=0.19.0",
     "openai>=1.0.0",
     "networkx>=3.0",
+    "click>=8.0.0",
 ]
 
 [project.optional-dependencies]
@@ -31,6 +32,9 @@ dev = [
     "flake8>=6.0.0",
     "mypy>=1.0.0",
 ]
+
+[project.scripts]
+scriptchain = "scriptchain.cli:main"
 
 [tool.black]
 line-length = 88

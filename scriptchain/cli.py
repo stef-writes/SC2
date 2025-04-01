@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, Any
 import importlib.util
 import sys
+import traceback
 
 from .core import ChainEngine, BaseNode
 from .core.prompts import EnhancedPromptTemplate
@@ -75,6 +76,9 @@ def run(node_path: str, input: str, input_file: str, output_file: str):
             click.echo(json.dumps(result, indent=2))
             
     except Exception as e:
+        click.echo(f"Error details: {str(e)}", err=True)
+        click.echo("Traceback:", err=True)
+        click.echo(traceback.format_exc(), err=True)
         raise click.ClickException(str(e))
 
 @cli.command()
@@ -83,12 +87,24 @@ def info(node_path: str):
     """Display information about a custom node."""
     try:
         node = load_custom_node(node_path)
-        click.echo(f"Node Name: {node.name}")
-        click.echo(f"Description: {node.description}")
-        click.echo(f"Required Context: {', '.join(node.required_context)}")
-        if hasattr(node, 'prompt'):
-            click.echo(f"Prompt Template: {node.prompt.template}")
+        click.echo(f"Node ID: {node.id}")
+        click.echo(f"Input Keys: {', '.join(node.input_keys)}")
+        click.echo(f"Output Key: {node.output_key}")
+        click.echo(f"Compress Output: {node.compress_output}")
+        if hasattr(node, 'prompt_template'):
+            click.echo(f"Prompt Template:\n{node.prompt_template.base_template.template}")
+            if node.prompt_template.examples:
+                click.echo("\nExamples:")
+                for i, ex in enumerate(node.prompt_template.examples, 1):
+                    click.echo(f"\nExample {i}:")
+                    click.echo(f"Input: {ex.input}")
+                    click.echo(f"Output: {ex.output}")
+                    if ex.reasoning:
+                        click.echo(f"Reasoning: {ex.reasoning}")
     except Exception as e:
+        click.echo(f"Error details: {str(e)}", err=True)
+        click.echo("Traceback:", err=True)
+        click.echo(traceback.format_exc(), err=True)
         raise click.ClickException(str(e))
 
 @cli.command()
@@ -101,7 +117,7 @@ def test(node_path: str):
         engine.add_node(node)
         
         # Create a test input
-        test_input = {key: f"test_{key}" for key in node.required_context}
+        test_input = {key: f"test_{key}" for key in node.input_keys}
         
         async def execute():
             result = await engine.execute(test_input)

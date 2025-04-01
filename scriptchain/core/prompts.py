@@ -23,14 +23,18 @@ class EnhancedPromptTemplate:
         self.example_header = example_header
         
     def format(self, **kwargs) -> str:
+        # Format the base template first
+        base_result = self.base_template.format(**kwargs)
+        
+        # If there are no examples, just return the base result
+        if not self.examples:
+            return base_result
+            
+        # Format examples
         example_str = "\n\n".join(
             [f"Input: {ex.input}\nOutput: {ex.output}\nReasoning: {ex.reasoning}" 
              for ex in self.examples]
         )
-        full_template = (
-            f"{self.example_header}\n{example_str}\n\n"
-            f"{self.base_template.template}"
-        )
-        return self.base_template.partial(
-            examples=example_str
-        ).format(**kwargs)
+        
+        # Combine everything
+        return f"{self.example_header}\n{example_str}\n\n{base_result}"

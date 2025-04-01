@@ -39,8 +39,8 @@ class ChainEngine:
             
             # Store optimized context
             self.context.add_context(
-                key=node.id,
-                data=result,
+                key=node.output_key,
+                data=result[node.output_key],
                 dependencies=node.input_keys,
                 compress=node.compress_output
             )
@@ -50,5 +50,5 @@ class ChainEngine:
         for key in initial_inputs:
             result[key] = self.context.get_context(key)
         for node in self.nodes:
-            result[node.id] = self.context.get_context(node.id)
+            result[node.output_key] = self.context.get_context(node.output_key)
         return result
